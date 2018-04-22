@@ -83,8 +83,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
     static BmpGenerator* generator;
     static DrawContext* render;
 
-    const int nWidthBytes = ((((WND_WIDTH+7)/8)+1)/2)*2;
-    static BITMAP bmp = { 0, WND_WIDTH, WND_HEIGHT, nWidthBytes, 1, 1, NULL };
+    const int nBitsPixel = 1;
+    const int nWidthBytes = ((((WND_WIDTH*nBitsPixel+7)/8)+1)/2)*2;
+    static BITMAP bmp = { 0, WND_WIDTH, WND_HEIGHT, nWidthBytes, 1, nBitsPixel, NULL };
     static HBITMAP hBmp;
 
     static DWORD dwTick = GetTickCount();
@@ -95,10 +96,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message,
         generator = new RandBmpGenerator(WND_WIDTH, WND_HEIGHT);
         render = new RgbDrawContext();
         generator->initialize();
+        ((RandBmpGenerator*)generator)->set_state(1);
         bmp.bmBits = (LPVOID)calloc(nWidthBytes*WND_HEIGHT, 1);
         render->draw(generator, &bmp);
         hBmp = CreateBitmapIndirect(&bmp);
-        SetTimer(hWnd, IDT_TIMER, 2000, (TIMERPROC) NULL);
+        SetTimer(hWnd, IDT_TIMER, 20, (TIMERPROC) NULL);
 		break;
       case WM_TIMER:
       {

@@ -4,7 +4,7 @@
  * @Email:  lev.vorobjev@rambler.ru
  * @Filename: bmp_generator.cpp
  * @Last modified by:   Lev Vorobjev
- * @Last modified time: 17.04.2018
+ * @Last modified time: 22.04.2018
  * @License: MIT
  * @Copyright: Copyright (c) 2018 Lev Vorobjev
  */
@@ -17,6 +17,7 @@ BmpGenerator::BmpGenerator(int nWidth, int nHeight) {
     this -> nWidth = nWidth;
     this -> nHeight = nHeight;
     dTime = 0.0;
+    dAverage = 0.5;
     lpdLayers = (double*)calloc(nWidth*nHeight*N_LAYERS, sizeof(double));
     lpdOldLayers = (double*)calloc(nWidth*nHeight*N_LAYERS, sizeof(double));
 }
@@ -36,4 +37,8 @@ int BmpGenerator::getHeight() const {
 
 double* BmpGenerator::getData() {
     return lpdLayers;
+}
+
+double BmpGenerator::getAverage() {
+    return dAverage;
 }

@@ -8,18 +8,24 @@ INCLUDE_DIR = ../include
 SRC_DIRS = .
 OBJ_DIRS = $(addprefix ${OBJ_DIR}/,${SRC_DIRS})
 
+CC = clang
 INCLUDES = -I${INCLUDE_DIR}
 DEFINES = -D_UNICODE -DUNICODE
 LIBS = -lcomctl32
-CFLAGS = -std=c++11 -Wall
+ifeq (${CC},clang)
+  LIBS += -lkernel32 -luser32 -lgdi32
+  TARGET = RandBmp2.exe
+endif
+CFLAGS = -std=c++14 -Wall
 CLFLAGS =
 ifdef DEBUG
   CFLAGS += -g
 else
   CFLAGS += -O
-  CLFLAGS += -s -Wl,--gc-sections
+  ifneq (${CC},clang)
+    CLFLAGS += -s -Wl,--gc-sections
+  endif
 endif
-
 
 SRCS = $(wildcard $(addsuffix /*.cpp, ${SRC_DIRS}))
 OBJS = $(addprefix ${OBJ_DIR}/, $(subst .cpp,.o,$(SRCS)))
@@ -31,16 +37,16 @@ RESC = $(addprefix ${OBJ_DIR}/, $(subst .rc,.res,$(RES)))
 all: ${BIN_DIR}/${TARGET}
 
 ${BIN_DIR}/${TARGET}: ${OBJS} ${RESC}
-	g++ ${CLFLAGS} -mwindows -o $@ $^ ${LIBS}
+	${CC} ${CLFLAGS} -mwindows -o $@ $^ ${LIBS}
 
 ${OBJ_DIR}/%.o: %.cpp ${HDRS}
-	g++ ${DEFINES} ${CFLAGS} ${INCLUDES} -c -o $@ $<
+	${CC} ${DEFINES} ${CFLAGS} ${INCLUDES} -c -o $@ $<
 
 ${OBJ_DIR}/%.res: %.rc resource.h
 	windres $< $@ -O coff
 
 run: ${BIN_DIR}/${TARGET}
-	${BIN_DIR}/${TARGET}.exe
+	${BIN_DIR}/${TARGET}
 
 ${OBJS} ${RESC}: | ${OBJ_DIRS}
 

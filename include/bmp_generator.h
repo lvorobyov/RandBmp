@@ -13,20 +13,13 @@
 
 #define N_LAYERS 3
 
-typedef struct _render_data_t {
-	int nWidth;
-	int nHeight;
-	double* lpdLayers;
-	double* lpdOldLayers;
-	double dTime;
-} render_data_t;
-
 class BmpGenerator {
 protected:
 	int nWidth;
 	int nHeight;
 	double* lpdLayers;
 	double* lpdOldLayers;
+	double dAverage;
 	double dTime;
 public:
 	BmpGenerator(int nWidth, int nHeight);
@@ -36,6 +29,7 @@ public:
 	int getWidth() const;
 	int getHeight() const;
 	double* getData();
+	double getAverage();
 };
 
 #endif

@@ -62,6 +62,8 @@ void RandBmpGenerator::step(double step) {
     double dRes;
     div_t d;
 
+    double dSum = 0.0;
+
     int layerSize = nWidth * nHeight;
     int lenght = layerSize * N_LAYERS;
     for (int i=0; i<lenght; i++) {
@@ -78,6 +80,9 @@ void RandBmpGenerator::step(double step) {
             + PARAM_H * (dA[5] + dA[6] - 2*dA[0]);
 		dRes = -dA[0] * (2 * PARAM_A * dRes * dRes - PARAM_A * fabs(dRes) + 1);
         lpdLayers[i] = dA[0] + step * dRes;
+
+        dSum += lpdLayers[i];
     }
     dTime += step;
+    dAverage = dSum / (double)lenght;
 }

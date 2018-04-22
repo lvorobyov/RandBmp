@@ -9,27 +9,30 @@
  */
 
 #include <rgb_draw_context.h>
+#include <math.h>
 
 void RgbDrawContext::draw(BmpGenerator* generator, LPBITMAP lpbm) {
-    int layer = 1;
     int nWidth = generator->getWidth();
     int nHeight = generator->getHeight();
     double* lpdLayers = generator->getData();
+    double dAverage = generator->getAverage();
     int lenght = nWidth * nHeight;
     int nWidthBytes = lpbm->bmWidthBytes;
-    int white = (nWidthBytes * 8) - nWidth * lpbm->bmBitsPixel;
+    int nBitsPixel = lpbm->bmBitsPixel;
+    int white = (nWidthBytes * 8) - nWidth * nBitsPixel;
     div_t d;
     int row, col;
     WORD word = 0;
-    for (int i=layer*lenght; i<(layer+1)*lenght; i++) {
+    for (int i=0; i<lenght; i++) {
         d = div(i, nWidth);
-        row = d.quot % nHeight;
-        d = div(col = d.rem, 16);
+        row = d.quot;
+        col = d.rem;
+        d = div(col, 16/nBitsPixel);
         word <<= 1;
-        if (lpdLayers[i] > 0.5) {
+        if (lpdLayers[i] > dAverage) {
             word |= 1;
         }
-        if (d.rem == 15) {
+        if (d.rem == 1) {
             ((LPWORD)lpbm->bmBits)[row * nWidthBytes/2 + d.quot] = word;
         } else if (col == nWidth-1) {
             ((LPWORD)lpbm->bmBits)[row * nWidthBytes/2 + d.quot] = (word << white);
