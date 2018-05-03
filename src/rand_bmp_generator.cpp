@@ -10,8 +10,6 @@
 
 #include <rand_bmp_generator.h>
 
-#define USE_MT19937
-
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
